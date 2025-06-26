@@ -33,7 +33,7 @@ As dailies assíncronas têm o objetivo de manter todos atualizados sobre o anda
 
 - **Frequência:** 1 planning por semana
 - **Formato:** Síncrona (via Google Meet)
-- **Duração estimada:** entre 30 minutos e 1 hora
+- **Duração estimada:** entre 25 minutos e 1 hora
 
 Como o projeto possui um prazo relativamente curto e o MVP envolve um conjunto limitado de funcionalidades, a equipe optou por trabalhar com sprints semanais. Cada sprint terá sua própria planning, em vez de realizar uma única reunião para planejar todas as entregas.
 
@@ -46,7 +46,7 @@ Essa decisão visa permitir maior flexibilidade, aprendizado contínuo e adapta�
 ### Sprint Review
 
 - **Frequência:** 1 review ao final de cada sprint (antes da próxima planning)
-- **Formato:** Síncrona (quando possível) ou assíncrona (com registro no Discord)
+- **Formato:** Síncrona no horário da aula com o professor
 
 ## Revisão dos Acordos
 
