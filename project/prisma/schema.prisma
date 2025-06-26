@@ -8,11 +8,15 @@
 
 generator client {
   provider = "prisma-client-js"
+  // Otimizações para Neon DB
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Configurações recomendadas para Neon DB
+  directUrl = env("DIRECT_URL") // Para conexões diretas (opcional)
 }
 
 model Modality {
@@ -21,4 +25,6 @@ model Modality {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  @@map("modalities")
 }
