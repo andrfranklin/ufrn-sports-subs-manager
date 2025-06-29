@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "NODE_ENV=production npm run build",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "NODE_ENV=development npm install",
   "framework": "nextjs",
   "regions": ["gru1"],
   "functions": {
