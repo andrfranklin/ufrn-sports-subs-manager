@@ -1,0 +1,12 @@
+{
+  "buildCommand": "NODE_ENV=production npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "NODE_ENV=development npm install",
+  "framework": "nextjs",
+  "regions": ["gru1"],
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+} 
