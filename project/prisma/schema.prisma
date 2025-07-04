@@ -28,3 +28,15 @@ model Modality {
 
   @@map("modalities")
 }
+
+
+model Student {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("students")
+}
