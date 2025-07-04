@@ -29,7 +29,6 @@ model Modality {
   @@map("modalities")
 }
 
-
 model Student {
   id        String    @id @default(uuid())
   name      String
