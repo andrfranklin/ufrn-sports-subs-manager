@@ -1,9 +1,40 @@
+import { useState } from "react";
+
 export default function CadastrarAlunoPage() {
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setMsg("");
+    const form = e.currentTarget;
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      cpf: form.cpf.value,
+      telefone: form.telefone.value,
+      dataNascimento: form.dataNascimento.value,
+    };
+    const res = await fetch("/api/alunos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      setMsg("Aluno cadastrado com sucesso!");
+      form.reset();
+    } else {
+      setMsg("Erro ao cadastrar aluno.");
+    }
+    setLoading(false);
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Cadastrar Aluno</h1>
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Nome
@@ -70,13 +101,15 @@ export default function CadastrarAlunoPage() {
         </div>
           </div>
           <button
-        type="submit"
-        className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700"
+            type="submit"
+            className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700"
+            disabled={loading}
           >
-        Cadastrar
+            {loading ? "Cadastrando..." : "Cadastrar"}
           </button>
+          {msg && <p className="mt-2">{msg}</p>}
         </form>
       </div>
     </div>
   );
-} 
+}
