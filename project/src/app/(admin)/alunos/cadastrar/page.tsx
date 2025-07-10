@@ -142,9 +142,9 @@ export default function CadastrarAlunoPage() {
               />
             </div>
             <div>
-              <Label htmlFor="telefone">Telefone</Label>
+              <Label htmlFor="telephone">Telefone</Label>
               <InputField
-                id="telefone"
+                id="telephone"
                 name="telephone"
                 value={fields.telephone}
                 onChange={handleTelefoneChange}
