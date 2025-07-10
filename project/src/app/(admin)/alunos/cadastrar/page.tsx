@@ -1,32 +1,99 @@
-'use client';
-import React, { useState } from "react";
+"use client";
+import { useState } from "react";
+import { useToast } from "@/components/ui/toast/ToastProvider";
+import Form from "@/components/form/Form";
+import InputField from "@/components/form/input/InputField";
+import DatePicker from "@/components/form/date-picker";
+import Label from "@/components/form/Label";
+
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+function validateCPF(cpf: string) {
+  return /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(cpf);
+}
+function validateTelefone(tel: string) {
+  return /^\(\d{2}\) \d{5}-\d{4}$/.test(tel);
+}
 
 export default function CadastrarAlunoPage() {
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
+  const { showToast } = useToast();
+  const [fields, setFields] = useState({
+    name: "",
+    email: "",
+    cpf: "",
+    telephone: "",
+    birthdate: "",
+  });
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function handleFieldChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFields((f) => ({ ...f, [name]: value }));
+    setErrors((err) => ({ ...err, [name]: "" }));
+  }
+
+  function handleCPFChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const formatted = formatCPF(e.target.value);
+    setFields((f) => ({ ...f, cpf: formatted }));
+    setErrors((err) => ({ ...err, cpf: "" }));
+  }
+
+  function handleTelefoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const formatted = formatTelefone(e.target.value);
+    setFields((f) => ({ ...f, telephone: formatted }));
+    setErrors((err) => ({ ...err, telephone: "" }));
+  }
+
+  function handleDateChange(selectedDates: Date[]) {
+    setFields((f) => ({ ...f, birthdate: selectedDates[0]?.toISOString().slice(0, 10) || "" }));
+    setErrors((err) => ({ ...err, birthdate: "" }));
+  }
+
+  function formatCPF(value: string) {
+    const numbers = value.replace(/\D/g, "").slice(0, 11);
+    return numbers
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+  function formatTelefone(value: string) {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .slice(0, 15);
+  }
+
+  async function handleSubmit() {
+    // Validação
+    const newErrors: { [k: string]: string } = {};
+    if (!fields.name) newErrors.name = "Nome é obrigatório.";
+    if (!fields.email) newErrors.email = "Email é obrigatório.";
+    else if (!validateEmail(fields.email)) newErrors.email = "Email inválido.";
+    if (!fields.cpf) newErrors.cpf = "CPF é obrigatório.";
+    else if (!validateCPF(fields.cpf)) newErrors.cpf = "CPF deve estar no formato 000.000.000-00.";
+    if (!fields.telephone) newErrors.telephone = "Telefone é obrigatório.";
+    else if (!validateTelefone(fields.telephone)) newErrors.telephone = "Telefone deve estar no formato (99) 99999-9999.";
+    if (!fields.birthdate) newErrors.birthdate = "Data de nascimento é obrigatória.";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
     setLoading(true);
-    setMsg("");
-    const form = e.currentTarget;
-    const data = {
-      name: form.name.value,
-      email: form.email.value,
-      cpf: form.cpf.value,
-      telefone: form.telefone.value,
-      dataNascimento: form.dataNascimento.value,
-    };
-    const res = await fetch("/api/alunos", {
+    const res = await fetch("/api/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(fields),
     });
     if (res.ok) {
-      setMsg("Aluno cadastrado com sucesso!");
-      form.reset();
+      showToast({ type: "success", title: "Sucesso", message: "Aluno cadastrado com sucesso!" });
+      setFields({ name: "", email: "", cpf: "", telephone: "", birthdate: "" });
+      // Forçar reset dos campos do formulário
+      document.querySelectorAll('input').forEach(input => input.value = "");
     } else {
-      setMsg("Erro ao cadastrar aluno.");
+      const { error } = await res.json();
+      showToast({ type: "error", title: "Erro", message: error || "Erro ao cadastrar aluno." });
     }
     setLoading(false);
   }
@@ -35,81 +102,79 @@ export default function CadastrarAlunoPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Cadastrar Aluno</h1>
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-        <form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
           <div className="mb-4">
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Nome
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        />
+            <Label htmlFor="name">Nome</Label>
+            <InputField
+              id="name"
+              name="name"
+              defaultValue={fields.name}
+              onChange={handleFieldChange}
+              placeholder="Nome completo"
+              error={!!errors.name}
+              hint={errors.name}
+            />
           </div>
           <div className="mb-4 grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="cpf" className="block text-sm font-medium text-gray-700">
-            CPF
-          </label>
-          <input
-            type="text"
-            id="cpf"
-            name="cpf"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            maxLength={14}
-            placeholder="000.000.000-00"
-          />
-        </div>
-        <div>
-          <label htmlFor="telefone" className="block text-sm font-medium text-gray-700">
-            Telefone
-          </label>
-          <input
-            type="tel"
-            id="telefone"
-            name="telefone"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            placeholder="(99) 99999-9999"
-          />
-        </div>
-        <div>
-          <label htmlFor="dataNascimento" className="block text-sm font-medium text-gray-700">
-            Data de Nascimento
-          </label>
-          <input
-            type="date"
-            id="dataNascimento"
-            name="dataNascimento"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          />
-        </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <InputField
+                id="email"
+                name="email"
+                type="email"
+                defaultValue={fields.email}
+                onChange={handleFieldChange}
+                placeholder="email@exemplo.com"
+                error={!!errors.email}
+                hint={errors.email}
+              />
+            </div>
+            <div>
+              <Label htmlFor="cpf">CPF</Label>
+              <InputField
+                id="cpf"
+                name="cpf"
+                value={fields.cpf}
+                onChange={handleCPFChange}
+                placeholder="000.000.000-00"
+                error={!!errors.cpf}
+                hint={errors.cpf}
+              />
+            </div>
+            <div>
+              <Label htmlFor="telefone">Telefone</Label>
+              <InputField
+                id="telefone"
+                name="telephone"
+                value={fields.telephone}
+                onChange={handleTelefoneChange}
+                placeholder="(99) 99999-9999"
+                error={!!errors.telephone}
+                hint={errors.telephone}
+              />
+            </div>
+            <div>
+              <DatePicker
+                id="birthdate"
+                label="Data de Nascimento"
+                mode="single"
+                onChange={dates => handleDateChange(dates as Date[])}
+                placeholder="Selecione a data"
+                defaultDate={fields.birthdate || undefined}
+              />
+              {errors.birthdate && (
+                <p className="mt-1.5 text-xs text-error-500">{errors.birthdate}</p>
+              )}
+            </div>
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700"
             disabled={loading}
+            className="w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
           >
             {loading ? "Cadastrando..." : "Cadastrar"}
           </button>
-          {msg && <p className="mt-2">{msg}</p>}
-        </form>
+        </Form>
       </div>
     </div>
   );
