@@ -105,6 +105,36 @@ export default function CadastrarTurmaPage() {
     if (!fields.targetAudienceIds.length) newErrors.targetAudienceIds = "Selecione ao menos um público-alvo.";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
+
+    for (const dia of fields.daysOfWeek) {
+      const params = new URLSearchParams({
+        location: fields.location,
+        day: dia,
+        startTime: fields.startTime,
+        endTime: fields.endTime,
+      });
+      const res = await fetch(`/api/classes/check-conflict?${params.toString()}`);
+      const data = await res.json();
+      if (data.conflict) {
+        const diasPt: Record<string, string> = {
+          sunday: "domingo",
+          monday: "segunda-feira",
+          tuesday: "terça-feira",
+          wednesday: "quarta-feira",
+          thursday: "quinta-feira",
+          friday: "sexta-feira",
+          saturday: "sábado",
+        };
+        showToast({
+          type: "error",
+          title: "Conflito de horário",
+          message: `Já existe uma turma na ${fields.location} na ${diasPt[dia] || dia} nesse horário.`
+        });
+        setLoading(false);
+        return;
+      }
+    }
+
     setLoading(true);
     let imageUrl = fields.imageUrl;
     if (selectedImageFile) {
