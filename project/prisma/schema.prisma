@@ -4,17 +4,19 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
 }
 
 model Modality {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?    @map("description")
+  iconUrl     String?    @map("icon_url")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
 
   @@map("modalities")
 }
@@ -31,4 +33,51 @@ model Student {
   deletedAt DateTime?
 
   @@map("students")
+}
+
+model Class {
+  id                   String                @id @default(uuid())
+  name                 String
+  description          String?               @map("description")
+  imageUrl             String?               @map("image_url")
+  daysOfWeek           String[]              @map("days_of_week")
+  startTime            DateTime
+  endTime              DateTime
+  capacity             Int
+  location             String
+  semester             String
+  modalityId           String
+  modality             Modality              @relation(fields: [modalityId], references: [id])
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+  classTargetAudiences ClassTargetAudience[]
+
+  @@map("classes")
+}
+
+model TargetAudience {
+  id                   String                @id @default(uuid())
+  name                 String
+  minAge               Int
+  maxAge               Int
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+  classTargetAudiences ClassTargetAudience[]
+
+  @@map("target_audiences")
+}
+
+model ClassTargetAudience {
+  id               String          @id @default(uuid())
+  classId          String
+  targetAudienceId String
+  class            Class           @relation(fields: [classId], references: [id])
+  targetAudience   TargetAudience  @relation(fields: [targetAudienceId], references: [id])
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime?
+
+  @@map("class_target_audiences")
 }
