@@ -17,6 +17,7 @@ model Modality {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   deletedAt   DateTime?
+  classes     Class[]
 
   @@map("modalities")
 }
