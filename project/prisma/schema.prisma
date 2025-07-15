@@ -1,22 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-//npx prisma migrate dev
-
 generator client {
-  provider = "prisma-client-js"
-  // Otimizações para Neon DB
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // Configurações recomendadas para Neon DB
-  directUrl = env("DIRECT_URL") // Para conexões diretas (opcional)
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Modality {
@@ -27,4 +17,18 @@ model Modality {
   deletedAt DateTime?
 
   @@map("modalities")
+}
+
+model Student {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  cpf       String    @unique
+  telephone String
+  birthdate DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("students")
 }
