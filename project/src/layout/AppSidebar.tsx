@@ -46,18 +46,15 @@ const navItems: NavItem[] = [
     name: "Modalidades",
     subItems: [
       { name: "Gerenciar Modalidades", path: "/modalidades", pro: false },
-      { name: "Inscrições", path: "/modalidades/inscricoes", pro: false },
-      { name: "Troca de Modalidade", path: "/modalidades/troca", pro: false },
     ],
   },
   {
     name: "Turmas",
     icon: <ListIcon />,
     subItems: [
-      { name: "Gerenciar Turmas", path: "/turmas", pro: false },
+      { name: "Cadastrar Turma", path: "/turmas/cadastrar", pro: false },
+      { name: "Listar Turma", path: "/turmas", pro: false },
       { name: "Horários", path: "/turmas/horarios", pro: false },
-      { name: "Capacidades", path: "/turmas/capacidades", pro: false },
-      { name: "Matrículas", path: "/turmas/matriculas", pro: false },
     ],
   },
   {
@@ -88,7 +85,6 @@ const othersItems: NavItem[] = [
     subItems: [
       { name: "Perfil", path: "/perfil", pro: false },
       { name: "Preferências", path: "/configuracoes", pro: false },
-      { name: "Acessibilidade", path: "/acessibilidade", pro: false },
     ],
   },
   {
