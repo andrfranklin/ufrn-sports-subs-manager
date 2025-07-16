@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body className={`${outfit.className} dark:bg-gray-900`}>
         <ToastProvider>
           <ThemeProvider>
             <SidebarProvider>{children}</SidebarProvider>

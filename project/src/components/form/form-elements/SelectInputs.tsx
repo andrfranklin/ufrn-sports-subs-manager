@@ -35,7 +35,7 @@ export default function SelectInputs() {
          <div className="relative">
            <Select
             options={options}
-            placeholder="Select Option"
+            placeholder="Selecione uma opção"
             onChange={handleSelectChange}
             className="dark:bg-dark-900"
           />
@@ -46,7 +46,7 @@ export default function SelectInputs() {
         </div>
         <div className="relative">
           <MultiSelect
-            label="Multiple Select Options"
+            label="Selecione as opções"
             options={multiOptions}
             defaultSelected={["1", "3"]}
             onChange={(values) => setSelectedValues(values)}

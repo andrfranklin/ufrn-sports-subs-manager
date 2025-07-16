@@ -5,6 +5,7 @@ import Form from "@/components/form/Form";
 import InputField from "@/components/form/input/InputField";
 import DatePicker from "@/components/form/date-picker";
 import Label from "@/components/form/Label";
+import ComponentCard from "@/components/common/ComponentCard";
 
 function validateEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -67,7 +68,6 @@ export default function CadastrarAlunoPage() {
   }
 
   async function handleSubmit() {
-    // Validação
     const newErrors: { [k: string]: string } = {};
     if (!fields.name) newErrors.name = "Nome é obrigatório.";
     if (!fields.email) newErrors.email = "Email é obrigatório.";
@@ -89,7 +89,6 @@ export default function CadastrarAlunoPage() {
     if (res.ok) {
       showToast({ type: "success", title: "Sucesso", message: "Aluno cadastrado com sucesso!" });
       setFields({ name: "", email: "", cpf: "", telephone: "", birthdate: "" });
-      // Forçar reset dos campos do formulário
       document.querySelectorAll('input').forEach(input => input.value = "");
     } else {
       const { error } = await res.json();
@@ -99,8 +98,7 @@ export default function CadastrarAlunoPage() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Cadastrar Aluno</h1>
+    <ComponentCard title="Cadastrar Aluno">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
         <Form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -176,6 +174,6 @@ export default function CadastrarAlunoPage() {
           </button>
         </Form>
       </div>
-    </div>
+    </ComponentCard>
   );
 }

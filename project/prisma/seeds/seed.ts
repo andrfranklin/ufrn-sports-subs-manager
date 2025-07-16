@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
+import { seedModalities } from './modality';
+import { seedTargetAudiences } from './targetAudience';
 
 async function main() {
   console.log("🌱 Starting database seeding...");
 
-  // Importar e executar todos os seeds
-  await import("./modality");
+  await seedModalities();
+  await seedTargetAudiences();
 
   console.log("✅ Database seeding completed!");
 }

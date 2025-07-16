@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import Pagination from "@/components/tables/Pagination";
 import { useToast } from "@/components/ui/toast/ToastProvider";
+import ComponentCard from "@/components/common/ComponentCard";
 
 interface Student {
   id: string;
@@ -86,13 +87,7 @@ export default function ListarAlunosPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Listar Alunos</h1>
-        <div className="text-sm text-gray-500">
-          Total: {total} alunos
-        </div>
-      </div>
+    <ComponentCard title="Listar Alunos">
       
       <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
         {loading ? (
@@ -202,6 +197,6 @@ export default function ListarAlunosPage() {
           </>
         )}
       </div>
-    </div>
+    </ComponentCard>
   );
 } 
