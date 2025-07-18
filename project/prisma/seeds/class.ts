@@ -1,6 +1,7 @@
 import { prisma } from "../../src/lib/prisma";
 
-async function main() {
+export async function seedClasses() {
+  await prisma.$connect();
   const modalidades = await prisma.modality.findMany();
   const publicos = await prisma.targetAudience.findMany();
 
@@ -19,8 +20,8 @@ async function main() {
       capacity: 20,
       location: "Quadra 1",
       semester: "2024.1",
-      modalityId: modalidades.find((m: any) => m.name === "Futebol")?.id || modalidades[0].id,
-      targetAudienceIds: [publicos.find((p: any) => p.name === "Adulto")?.id || publicos[0].id],
+      modalityId: modalidades.find((m) => m.name === "Futebol")?.id || modalidades[0].id,
+      targetAudienceIds: [publicos.find((p) => p.name === "Adulto")?.id || publicos[0].id],
     },
     {
       name: "Natação Infantil Terça e Quinta",
@@ -32,8 +33,8 @@ async function main() {
       capacity: 12,
       location: "Piscina",
       semester: "2024.1",
-      modalityId: modalidades.find((m: any) => m.name === "Natação")?.id || modalidades[0].id,
-      targetAudienceIds: [publicos.find((p: any) => p.name === "Infantil")?.id || publicos[0].id],
+      modalityId: modalidades.find((m) => m.name === "Natação")?.id || modalidades[0].id,
+      targetAudienceIds: [publicos.find((p) => p.name === "Infantil")?.id || publicos[0].id],
     },
     {
       name: "Ginástica para Idosos Sexta",
@@ -45,8 +46,8 @@ async function main() {
       capacity: 15,
       location: "Sala 2",
       semester: "2024.1",
-      modalityId: modalidades.find((m: any) => m.name === "Ginástica")?.id || modalidades[0].id,
-      targetAudienceIds: [publicos.find((p: any) => p.name === "Idoso")?.id || publicos[0].id],
+      modalityId: modalidades.find((m) => m.name === "Ginástica")?.id || modalidades[0].id,
+      targetAudienceIds: [publicos.find((p) => p.name === "Idoso")?.id || publicos[0].id],
     },
     {
       name: "Vôlei Adolescente Sábado",
@@ -58,8 +59,8 @@ async function main() {
       capacity: 18,
       location: "Quadra 2",
       semester: "2024.1",
-      modalityId: modalidades.find((m: any) => m.name === "Vôlei")?.id || modalidades[0].id,
-      targetAudienceIds: [publicos.find((p: any) => p.name === "Adolescente")?.id || publicos[0].id],
+      modalityId: modalidades.find((m) => m.name === "Vôlei")?.id || modalidades[0].id,
+      targetAudienceIds: [publicos.find((p) => p.name === "Adolescente")?.id || publicos[0].id],
     },
   ];
 
@@ -85,12 +86,14 @@ async function main() {
   }
 }
 
-main()
-  .then(() => console.log("Seed de turmas finalizado!"))
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  }); 
+if (require.main === module) {
+  seedClasses()
+    .then(() => console.log("Seed de turmas finalizado!"))
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    }); 
+}

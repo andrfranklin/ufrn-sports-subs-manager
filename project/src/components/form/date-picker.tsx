@@ -13,6 +13,7 @@ type PropsType = {
   defaultDate?: DateOption;
   label?: string;
   placeholder?: string;
+  dateFormat?: string;
 };
 
 export default function DatePicker({
@@ -22,13 +23,14 @@ export default function DatePicker({
   label,
   defaultDate,
   placeholder,
+  dateFormat = "Y-m-d",
 }: PropsType) {
   useEffect(() => {
     const flatPickr = flatpickr(`#${id}`, {
       mode: mode || "single",
       static: true,
       monthSelectorType: "static",
-      dateFormat: "Y-m-d",
+      dateFormat,
       defaultDate,
       onChange,
     });

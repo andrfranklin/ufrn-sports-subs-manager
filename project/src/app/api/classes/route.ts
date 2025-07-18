@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function POST(request: Request) {
   try {
@@ -45,9 +46,58 @@ export async function POST(request: Request) {
   }
 } 
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const name =  searchParams.get('name');
+    const semester = searchParams.get('semester');
+    const daysOfWeek = searchParams.get('daysOfWeek');
+    const startTime = searchParams.get('startTime');
+    const endTime = searchParams.get('endTime');
+
+
+    const where: Prisma.ClassWhereInput = {};
+    if (name) {
+      where.name = {
+        contains: name,
+        mode: 'insensitive',
+      };
+    }
+
+    if (semester) {
+      where.semester = {
+        contains: semester,
+        mode: 'insensitive',
+      };
+    }
+
+    if (daysOfWeek && daysOfWeek?.split(',').length) {
+      where.daysOfWeek = {
+        hasSome: daysOfWeek.toLowerCase().split(','),
+      };
+    }
+
+    if (daysOfWeek && daysOfWeek?.split(',').length) {
+      where.daysOfWeek = {
+        hasSome: daysOfWeek.toLowerCase().split(','),
+      };
+    }
+
+    if (startTime) {
+      where.startTime = {
+        gte: new Date(startTime),
+      };
+    }
+
+    if (endTime) {
+      where.endTime = {
+        lte: new Date(endTime),
+      };
+    }
+
+
     const classes = await prisma.class.findMany({
+      where,
       include: {
         modality: true,
         classTargetAudiences: {
@@ -55,7 +105,7 @@ export async function GET() {
         }
       }
     });
-    return NextResponse.json(classes);
+    return NextResponse.json(classes, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'Erro ao buscar turmas', details: error }, { status: 500 });
   }
