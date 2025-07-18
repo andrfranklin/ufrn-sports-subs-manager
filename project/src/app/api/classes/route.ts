@@ -54,9 +54,13 @@ export async function GET(request: Request) {
     const daysOfWeek = searchParams.get('daysOfWeek');
     const startTime = searchParams.get('startTime');
     const endTime = searchParams.get('endTime');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
 
+    const where: Prisma.ClassWhereInput = {
+      deletedAt: null
+    };
 
-    const where: Prisma.ClassWhereInput = {};
     if (name) {
       where.name = {
         contains: name,
@@ -68,12 +72,6 @@ export async function GET(request: Request) {
       where.semester = {
         contains: semester,
         mode: 'insensitive',
-      };
-    }
-
-    if (daysOfWeek && daysOfWeek?.split(',').length) {
-      where.daysOfWeek = {
-        hasSome: daysOfWeek.toLowerCase().split(','),
       };
     }
 
@@ -95,17 +93,50 @@ export async function GET(request: Request) {
       };
     }
 
+    const skip = (page - 1) * limit;
 
-    const classes = await prisma.class.findMany({
-      where,
-      include: {
-        modality: true,
-        classTargetAudiences: {
-          include: { targetAudience: true }
+    const [classes, total] = await Promise.all([
+      prisma.class.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          modality: true,
+          classTargetAudiences: {
+            include: { targetAudience: true }
+          },
+          students: {
+            where: {
+              deletedAt: null
+            },
+            select: {
+              id: true
+            }
+          }
         }
-      }
-    });
-    return NextResponse.json(classes, { status: 200 });
+      }),
+      prisma.class.count({
+        where
+      })
+    ]);
+
+    const classesWithStudentCount = classes.map(turma => ({
+      ...turma,
+      studentCount: turma.students.length
+    }));
+
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      turmas: classesWithStudentCount,
+      total,
+      totalPages,
+      currentPage: page
+    }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'Erro ao buscar turmas', details: error }, { status: 500 });
   }

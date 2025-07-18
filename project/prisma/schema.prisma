@@ -29,6 +29,8 @@ model Student {
   cpf       String    @unique
   telephone String
   birthdate DateTime
+  classId   String?   @map("class_id")
+  class     Class?    @relation(fields: [classId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -53,6 +55,7 @@ model Class {
   updatedAt            DateTime              @updatedAt
   deletedAt            DateTime?
   classTargetAudiences ClassTargetAudience[]
+  students             Student[]
 
   @@map("classes")
 }
