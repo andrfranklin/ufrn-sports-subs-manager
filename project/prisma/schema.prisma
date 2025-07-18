@@ -1,30 +1,87 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-//npx prisma migrate dev
-
 generator client {
-  provider = "prisma-client-js"
-  // Otimizações para Neon DB
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  // Configurações recomendadas para Neon DB
-  directUrl = env("DIRECT_URL") // Para conexões diretas (opcional)
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
 }
 
 model Modality {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?    @map("description")
+  iconUrl     String?    @map("icon_url")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  classes     Class[]
+
+  @@map("modalities")
+}
+
+model Student {
   id        String    @id @default(uuid())
-  name      String    @unique
+  name      String
+  email     String    @unique
+  cpf       String    @unique
+  telephone String
+  birthdate DateTime
+  classId   String?   @map("class_id")
+  class     Class?    @relation(fields: [classId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  @@map("modalities")
+  @@map("students")
+}
+
+model Class {
+  id                   String                @id @default(uuid())
+  name                 String
+  description          String?               @map("description")
+  imageUrl             String?               @map("image_url")
+  daysOfWeek           String[]              @map("days_of_week")
+  startTime            DateTime
+  endTime              DateTime
+  capacity             Int
+  location             String
+  semester             String
+  modalityId           String
+  modality             Modality              @relation(fields: [modalityId], references: [id])
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+  classTargetAudiences ClassTargetAudience[]
+  students             Student[]
+
+  @@map("classes")
+}
+
+model TargetAudience {
+  id                   String                @id @default(uuid())
+  name                 String
+  minAge               Int
+  maxAge               Int
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+  classTargetAudiences ClassTargetAudience[]
+
+  @@map("target_audiences")
+}
+
+model ClassTargetAudience {
+  id               String          @id @default(uuid())
+  classId          String
+  targetAudienceId String
+  class            Class           @relation(fields: [classId], references: [id])
+  targetAudience   TargetAudience  @relation(fields: [targetAudienceId], references: [id])
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime?
+
+  @@map("class_target_audiences")
 }
