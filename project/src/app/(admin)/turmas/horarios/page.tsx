@@ -15,7 +15,9 @@ export default function HorariosPage() {
           sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
           thursday: 4, friday: 5, saturday: 6
         };
-        const calendarEvents = data.map((turma: any) => ({
+        
+        const turmas = data.turmas || data;
+        const calendarEvents = turmas.map((turma: any) => ({
           title: turma.name,
           daysOfWeek: turma.daysOfWeek.map((d: string) => daysMap[d as keyof typeof daysMap]),
           startTime: turma.startTime.slice(11, 16),
