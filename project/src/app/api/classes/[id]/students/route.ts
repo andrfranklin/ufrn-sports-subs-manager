@@ -3,11 +3,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: classId } = params;
-
+    const { id: classId } = await params;
 
     const classExists = await prisma.class.findUnique({
       where: { id: classId }
