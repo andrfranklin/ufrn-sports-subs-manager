@@ -11,7 +11,7 @@ import { ChangeEvent } from "react";
 import FileInput from '@/components/form/input/FileInput';
 import ComponentCard from "@/components/common/ComponentCard";
 
-const diasSemana = [
+export const diasSemana = [
   { value: "monday", label: "Segunda" },
   { value: "tuesday", label: "Terça" },
   { value: "wednesday", label: "Quarta" },
