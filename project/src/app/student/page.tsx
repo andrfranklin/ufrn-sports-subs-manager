@@ -103,7 +103,8 @@ const TurmasPage = () => {
     });
     const response = await fetch(`/api/classes?${params.toString()}`);
     const data = await response.json();
-    setTurmas(data);
+    const turmas = data.turmas || data;
+    setTurmas(turmas);
   }
 
   const getDiasSemanaOptions = () => {
