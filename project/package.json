@@ -22,7 +22,7 @@
     "@fullcalendar/react": "^6.1.18",
     "@fullcalendar/timegrid": "^6.1.18",
     "@prisma/client": "^6.10.1",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "flatpickr": "^4.6.13",
     "next": "15.3.4",
     "prisma": "^6.10.1",
